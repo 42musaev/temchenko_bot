@@ -1,0 +1,23 @@
+[tool.poetry]
+name = "temchenko-bot"
+version = "0.1.0"
+description = ""
+authors = ["Askhab Musaev <42musaev@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.12"
+pre-commit = "^3.7.1"
+uvicorn = "^0.30.3"
+aiogram = "^3.10.0"
+pydantic-settings = "^2.3.4"
+yookassa = "^3.3.0"
+fastapi = "^0.111.1"
+alembic = "^1.13.2"
+asyncpg = "^0.29.0"
+apscheduler = "^3.10.4"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

@@ -1,0 +1,12 @@
+services:
+  bot_service:
+    container_name: bot_service_container
+    build:
+      context: ./
+      dockerfile: srs/Dockerfile
+    command: /bin/sh -c "alembic upgrade head && python3 bot.py"
+    volumes:
+      - ./srs:/app
+    restart: always
+    ports:
+      - 8000:8000
