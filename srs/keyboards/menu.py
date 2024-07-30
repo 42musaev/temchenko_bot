@@ -47,7 +47,8 @@ def create_main_menu(user_db: Dict | None = None) -> InlineKeyboardMarkup:
     main_menu_buttons = [
         [create_button('Оплатить/Подписаться', callback_data='pay_sub')],
     ]
-    if user_db and user_db.get('active'):
+    subscription = user_db.get('subscription')
+    if subscription and subscription.get('active'):
         main_menu_buttons.append(
             [create_button('Отменить подписку', callback_data='cancel_sub')]
         )

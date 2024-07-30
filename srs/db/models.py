@@ -57,19 +57,29 @@ class SubscriptionType:
 
 class User(Base):
     user_telegram_id: Mapped[int] = mapped_column(BigInteger, unique=True)
+    payments: Mapped[List['Payment']] = relationship('Payment', back_populates='user')
+    subscription: Mapped[Optional['Subscription']] = relationship(
+        'Subscription', uselist=False, back_populates='user'
+    )
+
+
+class Subscription(Base):
     payment_method_id: Mapped[UUID] = mapped_column(
         UUID(as_uuid=True),
         unique=True,
         nullable=True,
+    )
+    user_id: Mapped[int] = mapped_column(
+        BigInteger, ForeignKey('users.id'), unique=True
     )
     active: Mapped[bool] = mapped_column(Boolean, default=False)
     subscription_expiry: Mapped[datetime] = mapped_column(
         DateTime(timezone=True), nullable=True
     )
     subscription_type: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    chat_id: Mapped[int] = mapped_column(BigInteger)
     card_info: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
-    payments: Mapped[List['Payment']] = relationship('Payment', back_populates='user')
+
+    user: Mapped['User'] = relationship('User', back_populates='subscription')
 
 
 class Payment(Base):
