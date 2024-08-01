@@ -11,6 +11,7 @@ from db.crud import update_subscription
 from db.db_helper import sessionmanager
 from db.models import SubscriptionType
 from fastapi import Request
+from keyboards.menu import sub_detail
 from starlette import status
 from starlette.exceptions import HTTPException
 from yookassa import Configuration
@@ -102,7 +103,10 @@ class WebhookService:
                     current_subscription_expiry - datetime.now(tz=pytz.UTC)
                 ) + subscription_expiry
 
-            await bot.send_message(user_db.get('user_telegram_id'), text)
+                await bot.send_message(user_db.get('user_telegram_id'), text)
+            await bot.send_message(
+                user_db.get('user_telegram_id'), text, reply_markup=sub_detail
+            )
 
             await WebhookService.create_subscription(
                 user_db.get('id'),

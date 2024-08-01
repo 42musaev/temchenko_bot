@@ -18,25 +18,38 @@ from keyboards.menu import subscription_menu
 from services.yookassa_service import YookassaService
 
 
-async def format_subscription_info(user_db: Dict):
-    subscription = user_db.get('subscription')
+async def format_subscription_info(user_db: Dict) -> str:
+    subscription = user_db.get('subscription', {})
     expiry_date = subscription.get('subscription_expiry')
+    is_active = subscription.get('active', False)
+
     if expiry_date and expiry_date > datetime.now(pytz.UTC):
         formatted_expiry_date = expiry_date.astimezone(pytz.UTC).strftime('%d.%m.%Y')
         sub_type_text = SubscriptionType.get_sub_type(
-            subscription.get('subscription_type')
+            subscription.get('subscription_type', 'Неизвестно')
         )
-        card_info = (
-            json.loads(user_db.get('card_info', '{}'))
-            if user_db.get('card_info')
-            else None
-        )
+
+        card_info = json.loads(user_db.get('card_info', '{}')) if user_db.get('card_info') else {}
         card_text = (
-            f"{card_info.get('card_type')}: **** **** **** {card_info.get('card_last4')}"
+            f"{card_info.get('card_type', 'Неизвестно')}: **** **** **** {card_info.get('card_last4', 'XXXX')}"
             if card_info
-            else 'Подписка активна до окончания срока.'
+            else ''
         )
-        return f'Ваша подписка активна.\nТип подписки: {sub_type_text}.\nДата окончания: {formatted_expiry_date}.\n{card_text}'
+
+        if is_active:
+            return (
+                f"Ваша подписка активна.\n"
+                f"Тип подписки: {sub_type_text}.\n"
+                f"Дата окончания: {formatted_expiry_date}.\n"
+                f"{card_text}"
+            )
+        else:
+            return (
+                f"Подписка будет активна до: {formatted_expiry_date}.\n"
+                f"Тип подписки: {sub_type_text}.\n"
+                f"{card_text}"
+            )
+
     return None
 
 
@@ -123,8 +136,9 @@ async def process_confirm_cancel_sub(callback_query: CallbackQuery) -> None:
         await update_subscription(
             session, user_db.get('id'), {'active': False, 'card_info': ''}
         )
+        user_db['subscription']['active'] = False
     await callback_query.message.edit_text(
-        'Подписка отменена.', reply_markup=create_main_menu()
+        'Подписка отменена.', reply_markup=create_main_menu(user_db)
     )
     await callback_query.answer()
 

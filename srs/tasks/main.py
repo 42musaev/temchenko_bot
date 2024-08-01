@@ -85,5 +85,5 @@ async def deactivate_user_subscription(user_id):
         await session.commit()
 
 
-scheduler.add_job(renew_subscriptions_task, IntervalTrigger(seconds=6))
-scheduler.add_job(handle_expired_subscriptions_task, IntervalTrigger(seconds=6))
+scheduler.add_job(renew_subscriptions_task, IntervalTrigger(hours=6))
+scheduler.add_job(handle_expired_subscriptions_task, IntervalTrigger(hours=6))

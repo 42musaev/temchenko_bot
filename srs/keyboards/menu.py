@@ -28,7 +28,7 @@ back_button = InlineKeyboardMarkup(
 
 sub_detail = InlineKeyboardMarkup(
     inline_keyboard=[
-        [create_button('Подписаться', url=settings.INVITE_LINK)],
+        [create_button('Подписаться на канал', url=settings.INVITE_LINK)],
         [create_button('Назад', callback_data='back')],
     ]
 )
